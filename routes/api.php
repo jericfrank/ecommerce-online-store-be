@@ -21,7 +21,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::middleware('auth:api')->group(function () {
-	Route::get('logout', 'Auth\SocialAccountController@logout');
+	// Route::get('logout', 'Auth\SocialAccountController@logout');
+	Route::get('logout', 'Auth\LoginController@logout');
 });
 
 Route::get('/xxx', function () {
@@ -29,3 +30,7 @@ Route::get('/xxx', function () {
 		'user' => \Auth::user()
 	];
 });
+
+// passport
+Route::post('login', 'Auth\LoginController@login');
+Route::post('register', 'Auth\RegisterController@register');

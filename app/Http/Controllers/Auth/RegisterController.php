@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -67,5 +68,27 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+    }
+
+    /**
+     * Register a user
+     *
+     * @return Response
+     */
+    public function register(Request $request)
+    {
+        $validator = $this->validator($request->all());
+
+        if ( $validator->fails() ) {
+            return response()->json([ 'errors' => $validator->errors() ], 400);
+        }
+        
+        $user  = $this->create($request->all());
+        $token = $user->createToken('web')->accessToken;
+        
+        return [
+            'user'  => $user,
+            'token' => $token
+        ];
     }
 }
