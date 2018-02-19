@@ -17,7 +17,7 @@ class CreateUserProvidersTable extends Migration
             $table->increments('id');
             $table->string('avatar');
             $table->string('provider');
-            $table->string('provider_id')->unique();
+            $table->string('provider_id')->unique()->nullable();
             $table->integer('user_id');
             $table->timestamps();
         });

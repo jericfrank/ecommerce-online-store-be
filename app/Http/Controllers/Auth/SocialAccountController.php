@@ -41,8 +41,6 @@ class SocialAccountController extends Controller
 
         $authUser = $this->findOrCreateUser($user, $provider);
 
-        // Auth::login($authUser, true);
-
         return redirect($this->redirectTo);
     }
 
@@ -56,59 +54,42 @@ class SocialAccountController extends Controller
     public function findOrCreateUser($details, $provider)
     {
         $authUser = User::with([ 'providers' => function($q) use($details) {
-            $q->where('provider_id', $details->getId());
+            $q->where('provider_id', $details->getId())->first();
         } ])
         ->where('email', $details->getEmail())
         ->first();
         
         if ($authUser) {
-            $user            = $authUser;
-            $user->name      = $details->getName();
-            $user->api_token = $details->token;
-            $user->save();
-
             if ( $authUser->providers->isEmpty() ) {
                 $userProvider = new UserProvider;
             } else {
-                $userProvider = UserProvider::where('provider_id', $details->getId())->first();
+                $userProvider = $authUser->providers->where('provider_id', $details->getId())->first();
             }
             
             $userProvider->avatar      = $details->getAvatar();
             $userProvider->provider    = $provider;
             $userProvider->provider_id = $details->getId();
-            $userProvider->user_id     = $user->id;
+            $userProvider->user_id     = $authUser->id;
             $userProvider->save();
 
-            return $user;
+            return $authUser;
         }
 
         $user            = new User;
         $user->name      = $details->getName();
         $user->email     = $details->getEmail();
-        $user->api_token = $details->token;
         $user->password  = null;
         $user->save();
 
-        $userProvider              = new UserProvider;
-        $userProvider->avatar      = $details->getAvatar();
-        $userProvider->provider    = $provider;
-        $userProvider->provider_id = $details->getId();
-        $userProvider->user_id     = $user->id;
-        $userProvider->save();
+        $userProvider = new UserProvider([
+            'avatar'      => $details->getAvatar(),
+            'provider'    => $provider,
+            'provider_id' => $details->getId(),
+            'user_id'     => $user->id
+        ]);
+
+        $user->save()->providers()->save($userProvider);
 
         return $user;
-    }
-
-    /**
-     * Logout the user.
-     *
-     * @return Response
-     */
-    public function logout()
-    {
-        Auth::user()->api_token = '';
-        Auth::user()->save();
-
-        return redirect($this->redirectTo);
     }
 }

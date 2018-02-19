@@ -11,14 +11,4 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/xxx', function () {
-	return [
-		'user' => \Auth::user()
-	];
-});
-
 Route::get('login/{provider}/callback', 'Auth\SocialAccountController@handleProviderCallback');

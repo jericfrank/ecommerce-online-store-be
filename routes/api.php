@@ -14,23 +14,14 @@ use Illuminate\Http\Request;
 */
 
 Route::get('login/{provider}', 'Auth\SocialAccountController@redirectToProvider');
-// Route::get('login/{provider}/callback', 'Auth\SocialAccountController@handleProviderCallback');
-
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 Route::middleware('auth:api')->group(function () {
-	// Route::get('logout', 'Auth\SocialAccountController@logout');
 	Route::get('logout', 'Auth\LoginController@logout');
+
+	Route::prefix('examples')->group(function () {
+		Route::resource('books', 'Examples\BookController');
+	});
 });
 
-Route::get('/xxx', function () {
-	return [
-		'user' => \Auth::user()
-	];
-});
-
-// passport
 Route::post('login', 'Auth\LoginController@login');
 Route::post('register', 'Auth\RegisterController@register');

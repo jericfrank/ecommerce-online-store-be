@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\UserProvider;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -71,6 +72,22 @@ class RegisterController extends Controller
     }
 
     /**
+     * Create a new user provider.
+     *
+     * @param  array  $data
+     * @return \App\UserProvider
+     */
+    protected function provider(array $data)
+    {
+        return UserProvider::create([
+            'avatar'      => $data['avatar'],
+            'provider'    => $data['provider'],
+            'provider_id' => null,
+            'user_id'     => $data['user_id']
+        ]);
+    }
+
+    /**
      * Register a user
      *
      * @return Response
@@ -84,11 +101,19 @@ class RegisterController extends Controller
         }
         
         $user  = $this->create($request->all());
-        $token = $user->createToken('web')->accessToken;
         
+        $provider  = $this->provider([
+            'avatar'      => '/default-avatar-250x250.png',
+            'provider'    => 'internal',
+            'user_id'     => $user->id
+        ]);
+
+        $token = $user->createToken('web')->accessToken;
+
         return [
-            'user'  => $user,
-            'token' => $token
+            'user'     => $user,
+            'provider' => $provider,
+            'token'    => $token
         ];
     }
 }
