@@ -18,6 +18,14 @@ class UserRepository extends BaseRepository implements UserInterface
     }
 
     /**
+     * @return array
+     */
+    public function list()
+    {
+        return $this->model->all();
+    }
+
+    /**
      * @param array $attributes
      * @return mixed
      */

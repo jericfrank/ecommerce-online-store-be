@@ -7,6 +7,8 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use App\Services\Models\UserProvider;
+
 class User extends Authenticatable
 {
     use HasApiTokens, Notifiable, SoftDeletes;
@@ -34,6 +36,6 @@ class User extends Authenticatable
      */
     public function providers()
     {
-        return $this->hasMany('App\Services\Models\UserProvider', 'user_id', 'id');
+        return $this->hasMany( UserProvider::class, 'user_id', 'id' );
     }
 }
