@@ -25,4 +25,13 @@ class UserProviderRepository extends BaseRepository implements UserProviderInter
     {
         return $this->model->create($attributes);
     }
+
+    /**
+     * @param array $data
+     * @return mixed
+     */
+    public function findOneBy(array $attributes)
+    {
+        return $this->model->where([ $attributes ])->first();
+    }
 }

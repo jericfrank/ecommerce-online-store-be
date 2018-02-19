@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\UserProvider;
+use App\Repositories\Interfaces\UserProviderInterface;
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -10,6 +11,18 @@ use Auth;
 
 class LoginController extends Controller
 {
+    private $providers;
+    
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct(UserProviderInterface $providers)
+    {
+        $this->providers = $providers;
+    }
+
     /**
      * Login a user
      *
@@ -19,7 +32,7 @@ class LoginController extends Controller
     {
         if (Auth::attempt(['email' => $request->post('email'), 'password' => $request->post('password')])) {
             $user     = Auth::user();
-            $provider = UserProvider::where('user_id', '=', $user->id)->where('provider', '=', 'internal')->first();
+            $provider = $this->providers->findOneBy([ 'user_id', '=', $user->id ], [ 'provider', '=', 'internal' ]);
             $token    = $user->createToken('web')->accessToken;
             
             return [
@@ -29,7 +42,7 @@ class LoginController extends Controller
             ];
         }
 
-        return abort(401, 'Login Error');
+        return abort(401, 'Unauthenticated');
     }
 
     /**
