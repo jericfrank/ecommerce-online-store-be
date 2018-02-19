@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Repositories\Interfaces\UserInterface;
-use App\Repositories\Interfaces\UserProviderInterface;
+use App\Services\Interfaces\UserInterface;
+use App\Services\Interfaces\UserProviderInterface;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;

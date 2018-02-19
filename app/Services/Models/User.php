@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Services\Models;
 
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
@@ -34,6 +34,6 @@ class User extends Authenticatable
      */
     public function providers()
     {
-        return $this->hasMany('App\UserProvider', 'user_id', 'id');
+        return $this->hasMany('App\Services\Models\UserProvider', 'user_id', 'id');
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repositories\Interfaces;
+namespace App\Services\Interfaces;
 
-use App\Repositories\Interfaces\BaseInterface;
+use App\Services\Interfaces\BaseInterface;
 
 interface UserInterface extends BaseInterface
 {
