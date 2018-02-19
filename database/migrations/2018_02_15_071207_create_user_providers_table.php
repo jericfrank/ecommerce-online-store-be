@@ -20,6 +20,7 @@ class CreateUserProvidersTable extends Migration
             $table->string('provider_id')->unique()->nullable();
             $table->integer('user_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
