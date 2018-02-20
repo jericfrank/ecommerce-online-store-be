@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-use App\User;
-use App\UserProvider;
+use App\Services\Models\User;
+use App\Services\Models\UserProvider;
 
 use Socialite;
 use Auth;
@@ -41,7 +41,9 @@ class SocialAccountController extends Controller
 
         $authUser = $this->findOrCreateUser($user, $provider);
 
-        return redirect($this->redirectTo);
+        return $authUser;
+        
+        // return redirect($this->redirectTo);
     }
 
     /**
@@ -58,7 +60,7 @@ class SocialAccountController extends Controller
         } ])
         ->where('email', $details->getEmail())
         ->first();
-        
+
         if ($authUser) {
             if ( $authUser->providers->isEmpty() ) {
                 $userProvider = new UserProvider;
@@ -88,7 +90,7 @@ class SocialAccountController extends Controller
             'user_id'     => $user->id
         ]);
 
-        $user->save()->providers()->save($userProvider);
+        $user->providers()->save($userProvider);
 
         return $user;
     }
