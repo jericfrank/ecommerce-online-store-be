@@ -22,7 +22,7 @@ class UserRepository extends BaseRepository implements UserInterface
      */
     public function list()
     {
-        return $this->model->all();
+        return $this->model->with('providers')->get();
     }
 
     /**
@@ -34,5 +34,14 @@ class UserRepository extends BaseRepository implements UserInterface
         $attributes['password'] = bcrypt($attributes['password']);
 
         return $this->model->create($attributes);
+    }
+
+    /**
+     * @param array $data
+     * @return mixed
+     */
+    public function findOneBy(array $attributes)
+    {
+        return $this->model->where([ $attributes ])->with('providers')->first();
     }
 }

@@ -12,9 +12,9 @@ class UserProviderRepository extends BaseRepository implements UserProviderInter
      * UserProviderRepository constructor.
      * @param UserProvider $article
      */
-    public function __construct(UserProvider $user)
+    public function __construct(UserProvider $provider)
     {
-        $this->model = $user;
+        $this->model = $provider;
     }
 
     /**
@@ -27,11 +27,21 @@ class UserProviderRepository extends BaseRepository implements UserProviderInter
     }
 
     /**
-     * @param array $data
+     * @param array $attributes
      * @return mixed
      */
     public function findOneBy(array $attributes)
     {
         return $this->model->where([ $attributes ])->first();
+    }
+
+    /**
+     * @param array $attributes
+     * @param int $id
+     * @return bool
+     */
+    public function update(array $attributes, int $id)
+    {
+        return $this->model->find($id)->update($attributes);
     }
 }

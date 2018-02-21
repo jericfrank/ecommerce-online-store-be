@@ -5,20 +5,33 @@ namespace App\Http\Controllers\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-use App\Services\Models\User;
-use App\Services\Models\UserProvider;
+use App\Services\Interfaces\UserInterface;
+use App\Services\Interfaces\UserProviderInterface;
 
 use Socialite;
 use Auth;
 
 class SocialAccountController extends Controller
 {
+    private $users;
+
     /**
      * Where to redirect users after login.
      *
      * @var string
      */
     protected $redirectTo = 'http://localhost:3000/contact';
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct(UserInterface $users, UserProviderInterface $provider)
+    {
+        $this->user     = $users;
+        $this->provider = $provider;
+    }
 
     /**
      * Redirect the user to the GitHub authentication page.
@@ -37,11 +50,11 @@ class SocialAccountController extends Controller
      */
     public function handleProviderCallback($provider)
     {
-        $user = Socialite::driver($provider)->stateless()->user();
+        $socialite = Socialite::driver($provider)->stateless()->user();
+        
+        $user = $this->findOrCreateUser($socialite, $provider);
 
-        $authUser = $this->findOrCreateUser($user, $provider);
-
-        return $authUser;
+        return $user;
         
         // return redirect($this->redirectTo);
     }
@@ -53,45 +66,52 @@ class SocialAccountController extends Controller
      * @param $provider Social auth provider
      * @return  User
      */
-    public function findOrCreateUser($details, $provider)
+    public function findOrCreateUser($details, $userProvider)
     {
-        $authUser = User::with([ 'providers' => function($q) use($details) {
-            $q->where('provider_id', $details->getId())->first();
-        } ])
-        ->where('email', $details->getEmail())
-        ->first();
+        $user = $this->user->findOneBy([ 'email', '=', $details->getEmail() ]);
 
-        if ($authUser) {
-            if ( $authUser->providers->isEmpty() ) {
-                $userProvider = new UserProvider;
+        if ( $user )
+        {
+            $provider = $user->providers->where('provider_id', $details->getId());
+
+            $attributes = [
+                'avatar'      => $details->getAvatar(),
+                'provider'    => $userProvider,
+                'provider_id' => $details->getId(),
+                'user_id'     => $user->id
+            ];
+
+            if ( $provider->isEmpty() ) 
+            {
+                $this->provider->create( $attributes );
             } else {
-                $userProvider = $authUser->providers->where('provider_id', $details->getId())->first();
-            }
-            
-            $userProvider->avatar      = $details->getAvatar();
-            $userProvider->provider    = $provider;
-            $userProvider->provider_id = $details->getId();
-            $userProvider->user_id     = $authUser->id;
-            $userProvider->save();
+                $id = $provider->pluck('id')->first();
 
-            return $authUser;
+                $this->provider->update( $attributes, $id );
+            }
+
+            return [
+                'user'  => $user,
+                'token' => $user->createToken('web')->accessToken
+            ];
         }
 
-        $user            = new User;
-        $user->name      = $details->getName();
-        $user->email     = $details->getEmail();
-        $user->password  = null;
-        $user->save();
-
-        $userProvider = new UserProvider([
-            'avatar'      => $details->getAvatar(),
-            'provider'    => $provider,
-            'provider_id' => $details->getId(),
-            'user_id'     => $user->id
+        $userCreate = $this->user->create([
+            'name'     => $details->getName(),
+            'email'    => $details->getEmail(),
+            'password' => null
         ]);
 
-        $user->providers()->save($userProvider);
+        $this->provider->create([
+            'avatar'      => $details->getAvatar(),
+            'provider'    => $userProvider,
+            'provider_id' => $details->getId(),
+            'user_id'     => $userCreate->id
+        ]);
 
-        return $user;
+        return [
+            'user'  => $userCreate->with('providers'),
+            'token' => $userCreate->createToken('web')->accessToken
+        ];
     }
 }
