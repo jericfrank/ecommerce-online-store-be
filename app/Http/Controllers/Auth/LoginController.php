@@ -42,7 +42,7 @@ class LoginController extends Controller
             ];
         }
 
-        return abort(401, 'Unauthenticated');
+        return response('Unauthorized.', 401);
     }
 
     /**

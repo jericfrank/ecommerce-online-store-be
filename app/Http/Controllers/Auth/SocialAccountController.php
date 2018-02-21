@@ -16,13 +16,6 @@ class SocialAccountController extends Controller
     private $users;
 
     /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    protected $redirectTo = 'http://localhost:3000/contact';
-
-    /**
      * Create a new controller instance.
      *
      * @return void
@@ -51,12 +44,10 @@ class SocialAccountController extends Controller
     public function handleProviderCallback($provider)
     {
         $socialite = Socialite::driver($provider)->stateless()->user();
-        
+
         $user = $this->findOrCreateUser($socialite, $provider);
 
         return $user;
-        
-        // return redirect($this->redirectTo);
     }
 
     /**
