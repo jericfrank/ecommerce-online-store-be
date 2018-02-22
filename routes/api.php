@@ -13,16 +13,20 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('login/{provider}', 'Auth\SocialAccountController@redirectToProvider');
+
+
+Route::prefix('login')->group(function () {
+	Route::post('/', 'Auth\LoginController@login');
+	Route::get('{provider}', 'Auth\SocialiteController@redirectToProvider');
+	Route::get('{provider}/callback', 'Auth\SocialiteController@handleProviderCallback');
+});
+
+Route::post('register', 'Auth\RegisterController@register');
 
 Route::middleware('auth:api')->group(function () {
 	Route::get('logout', 'Auth\LoginController@logout');
 
 	Route::prefix('examples')->group(function () {
-		Route::resource('books', 'Examples\BookController');
+		Route::resource('companies', 'Examples\CompanyController');
 	});
 });
-
-Route::get('login/{provider}/callback', 'Auth\SocialAccountController@handleProviderCallback');
-Route::post('login', 'Auth\LoginController@login');
-Route::post('register', 'Auth\RegisterController@register');

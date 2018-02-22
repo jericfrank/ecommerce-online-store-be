@@ -11,7 +11,7 @@ use App\Services\Interfaces\UserProviderInterface;
 use Socialite;
 use Auth;
 
-class SocialAccountController extends Controller
+class SocialiteController extends Controller
 {
     private $users;
 

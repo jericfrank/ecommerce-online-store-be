@@ -18,6 +18,15 @@ class UserProvider extends Model
         'avatar', 'provider', 'provider_id', 'user_id',
     ];
 
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'deleted_at'
+    ];
+
 	/**
      * Table name in database
      *

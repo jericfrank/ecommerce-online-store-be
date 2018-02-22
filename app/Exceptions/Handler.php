@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -48,6 +49,26 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if ( $request->is('api/*') )
+        {
+            if ($exception instanceof AuthenticationException) {
+                return response()->json( $exception->getMessage(), 401 );
+            }
+
+            if ( config('app.debug') )
+            {
+                return response()->json( [
+                    'message' => $exception->getMessage(),
+                    'file'    => $exception->getFile(),
+                    'line'    => $exception->getLine()
+                ], 500 );    
+            }
+            
+            return response()->json( [
+                'message' => 'Whoops, looks like something went wrong.'
+            ], 500 );
+        }
+
         return parent::render($request, $exception);
     }
 }

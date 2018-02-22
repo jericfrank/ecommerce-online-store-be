@@ -40,12 +40,13 @@ class RegisterController extends Controller
             'user_id'     => $user->id
         ]);
 
+        $user['providers'] = [ $provider ];
+
         $token = $user->createToken('web')->accessToken;
 
         return [
-            'user'     => $user,
-            'provider' => $provider,
-            'token'    => $token
+            'user'  => $user,
+            'token' => $token
         ];
     }
 }
