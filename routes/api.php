@@ -23,5 +23,6 @@ Route::middleware('auth:api')->group(function () {
 	});
 });
 
+Route::get('login/{provider}/callback', 'Auth\SocialAccountController@handleProviderCallback');
 Route::post('login', 'Auth\LoginController@login');
 Route::post('register', 'Auth\RegisterController@register');
