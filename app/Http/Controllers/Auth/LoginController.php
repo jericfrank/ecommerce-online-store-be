@@ -33,6 +33,8 @@ class LoginController extends Controller
 
             $token = $user->createToken('web')->accessToken;
             
+            $user[ 'provider' ] = 'internal';
+
             return [
                 'user'  => $user,
                 'token' => $token

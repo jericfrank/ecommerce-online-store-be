@@ -81,6 +81,8 @@ class SocialiteController extends Controller
                 $this->provider->update( $attributes, $id );
             }
 
+            $user->provider = $userProvider;
+            
             return [
                 'user'  => $user,
                 'token' => $user->createToken('web')->accessToken
