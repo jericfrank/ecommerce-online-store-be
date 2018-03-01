@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use App\Http\Requests\SocialiteRequest;
+
 use App\Services\Interfaces\UserInterface;
 use App\Services\Interfaces\UserProviderInterface;
 
@@ -31,7 +33,7 @@ class SocialiteController extends Controller
      *
      * @return Response
      */
-    public function redirectToProvider(Request $request)
+    public function redirectToProvider(SocialiteRequest $request)
     {
         $payload = $request->all();
 
