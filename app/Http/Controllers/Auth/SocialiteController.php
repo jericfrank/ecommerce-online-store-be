@@ -31,9 +31,30 @@ class SocialiteController extends Controller
      *
      * @return Response
      */
-    public function redirectToProvider($provider)
+    public function redirectToProvider(Request $request)
     {
-        return Socialite::driver($provider)->stateless()->redirect()->getTargetUrl();
+        $payload = $request->all();
+
+        $state = [
+            'referer' => $payload[ 'callback' ]
+        ];
+
+        return Socialite::driver($payload[ 'provider' ])->with([ 'state' => $state ])->stateless()->redirect()->getTargetUrl();
+    }
+
+    /**
+     * Obtain the provider callback proxy to referer
+     *
+     * @return Response
+     */
+    public function handleProviderCallback(Request $request, $provider)
+    {
+        $state = $request->get('state');
+        $code  = $request->get('code');
+
+        $redirect = $state[ 'referer' ].'?code='.$code.'&provider='.$provider;
+
+        return redirect()->away( $redirect );
     }
 
     /**
@@ -41,8 +62,7 @@ class SocialiteController extends Controller
      *
      * @return Response
      */
-    public function handleProviderCallback($provider)
-    {
+    public function handleProviderAuth( $provider ) {
         $socialite = Socialite::driver($provider)->stateless()->user();
 
         $user = $this->findOrCreateUser($socialite, $provider);
