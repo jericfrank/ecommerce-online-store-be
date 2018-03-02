@@ -18,7 +18,8 @@ class CreateUserProvidersTable extends Migration
             $table->string('avatar');
             $table->string('provider');
             $table->string('provider_id')->unique()->nullable();
-            $table->integer('user_id');
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();
         });
