@@ -6,6 +6,8 @@ use App\Services\Models\User;
 use App\Services\Interfaces\UserInterface;
 use App\Services\Repositories\BaseRepository;
 
+use Auth;
+
 class UserRepository extends BaseRepository implements UserInterface
 {
     /**
@@ -43,5 +45,22 @@ class UserRepository extends BaseRepository implements UserInterface
     public function findOneBy(array $attributes)
     {
         return $this->model->where([ $attributes ])->with('providers')->first();
+    }
+
+    /**
+     * @param array $credentials
+     * @return mixed
+     */
+    public function attempt(array $credentials)
+    {
+        return Auth::attempt($credentials);
+    }
+
+    /**
+     * @return current user
+     */
+    public function user()
+    {
+        return Auth::user();
     }
 }

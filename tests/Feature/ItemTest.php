@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use App\Services\Models\Items;
 use App\Services\Models\User;
 use Laravel\Passport\Passport;
 
@@ -13,22 +14,32 @@ use Mockery;
 
 class ItemTest extends TestCase
 {
+    public function setUp() {
+        parent::setUp();
+    
+        Passport::actingAs(
+            factory(User::class)->create(),
+            [ 'web' ]
+        );
+    }
+
     public function testIndex()
     {
-        Passport::actingAs(
-	        factory(User::class)->create(),
-	        [ 'web' ]
-	    );
+    	$data = [
+            // response data
+        ];
 
-    	$data = [];
+    	$mock = Mockery::mock( 'App\Services\Interfaces\ItemInterface' );
+    	$mock->shouldReceive( 'list' )->once()->andReturn( $data );
 
-    	$mock = Mockery::mock( App\Services\Interfaces\ItemInterface::class );
-    	$mock->shouldReceive( $data )->andReturn( '' );
-
-        $this->app->instance( App\Services\Interfaces\ItemInterface::class, $mock );
-
+        $this->app->instance( 'App\Services\Interfaces\ItemInterface', $mock );
+    
         $expect = $this->call( 'GET', '/api/products/items' );
 
-        $expect->assertStatus( 200 )->assertJsonStructure( $data );
+        $expect->assertStatus( 200 )->assertExactJson( $data );
+    }
+
+    public function tearDown() {
+        Mockery::close();
     }
 }

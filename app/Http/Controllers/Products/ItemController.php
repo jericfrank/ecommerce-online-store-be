@@ -9,7 +9,7 @@ use App\Services\Interfaces\ItemInterface;
 
 class ItemController extends Controller
 {
-	private $items;
+	protected $items;
 
 	public function __construct(ItemInterface $items)
     {

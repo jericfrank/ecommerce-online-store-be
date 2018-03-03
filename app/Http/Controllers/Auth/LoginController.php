@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Services\Interfaces\UserInterface;
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -9,14 +11,16 @@ use Auth;
 
 class LoginController extends Controller
 {
+    private $users;
+
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(UserInterface $users)
     {
-        //
+        $this->users = $users;
     }
 
     /**
@@ -26,10 +30,10 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        if (Auth::attempt(['email' => $request->post('email'), 'password' => $request->post('password')])) {
-            $user = Auth::user();
-            
-            $user['providers'] = Auth::user()->providers->where('provider', '=', 'internal');
+        if ($this->users->attempt(['email' => $request->post('email'), 'password' => $request->post('password')])) {
+            $user = $this->users->user();
+
+            $user['providers'] = $user->providers->where('provider', '=', 'internal');
 
             $token = $user->createToken('web')->accessToken;
             

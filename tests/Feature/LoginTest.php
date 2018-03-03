@@ -3,50 +3,69 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 use App\Services\Models\User;
+use Laravel\Passport\Passport;
+
+use Mockery as m;
 
 class LoginTest extends TestCase
 {
     public function testLoginSuccess()
     {
-    	$headers = [
-    		'Content-Type' => 'application/json'
-    	];
-    	$payload = [
-    		'email'    => 'guns@gmail.com',
-    		'password' => 'secret'
-    	];
+        $data = [
+            'user'  => [],
+            'token' => ''
+        ];
 
-    	$expect = $this->withHeaders( $headers )->json( 'POST', '/api/login', $payload );
+        $payload = [
+            'email'    => 'test@gmail.com',
+            'password' => 'test',
+        ];
 
-    	$response = [
-    		'user' => [
-    			'id',
-    			'name',
-    			'email',
-    			'created_at',
-    			'updated_at',
-    			'providers' => [
-    				[
-    					'id',
-    					'avatar',
-    					'provider',
-    					'provider_id',
-    					'user_id',
-    					'created_at',
-    					'updated_at'
-    				]
-    			],
-    			'provider'
-    		],
-    		'token'
-    	];
+        $mock = m::mock( 'App\Services\Interfaces\UserInterface' );
+        $mock->shouldReceive( 'attempt' )->once()->with( $payload )->andReturn( true );
+        $mock->shouldReceive( 'user' )->once()->andReturn( m::mock( new User ) );
 
-        $expect
-            ->assertStatus( 200 )
-            ->assertJsonStructure( $response );
+        $this->app->instance( 'App\Services\Interfaces\UserInterface', $mock );
+
+        $expect = $this->call( 'POST', '/api/login', $payload );
+
+        $expect->assertStatus( 200 )->assertJsonStructure( [ 'user', 'token' ] );
+    }
+
+    public function testLoginError()
+    {
+        $payload = [
+            'email'    => 'test@gmail.com',
+            'password' => 'test',
+        ];
+
+        $mock = m::mock( 'App\Services\Interfaces\UserInterface' );
+        $mock->shouldReceive( 'attempt' )->once()->with( $payload )->andReturn( false );
+
+        $this->app->instance( 'App\Services\Interfaces\UserInterface', $mock );
+
+        $expect = $this->call( 'POST', '/api/login', $payload );
+
+        $expect->assertStatus( 401 )->assertSee( 'Unauthorized' );
+    }
+
+    public function testLogout()
+    {
+        Passport::actingAs(
+            factory(User::class)->create(),
+            [ 'web' ]
+        );
+
+        $expect = $this->call( 'GET', '/api/logout' );
+
+        $expect->assertStatus( 204 );
+    }
+
+    public function tearDown() {
+        m::close();
     }
 }
