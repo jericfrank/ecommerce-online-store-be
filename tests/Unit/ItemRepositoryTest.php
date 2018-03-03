@@ -32,4 +32,20 @@ class ItemRepositoryTest extends TestCase
 
     	$this->assertEquals( $expect->list(), [] );
     }
+
+    public function testCreate()
+    {
+        $payload = [
+            'name'        => 'test',
+            'description' => 'test',
+            'category_id' => 1,
+            'created_by'  => 1
+        ];
+
+        $this->items->shouldReceive( 'create' )->once()->with( $payload )->andReturn( [] );
+
+        $expect = new ItemRepository( $this->items );
+
+        $this->assertEquals( $expect->create( $payload ), [] );
+    }
 }
