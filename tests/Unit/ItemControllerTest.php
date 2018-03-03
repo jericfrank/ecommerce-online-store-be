@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Controllers;
+namespace Tests\Unit;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -12,7 +12,7 @@ use Laravel\Passport\Passport;
 
 use Mockery;
 
-class ItemTest extends TestCase
+class ItemControllerTest extends TestCase
 {
     public function setUp() {
         parent::setUp();

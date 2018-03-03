@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Controllers;
+namespace Tests\Unit;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -11,7 +11,7 @@ use Laravel\Passport\Passport;
 
 use Mockery as m;
 
-class LoginTest extends TestCase
+class LoginControllerTest extends TestCase
 {
     public function testLoginSuccess()
     {
