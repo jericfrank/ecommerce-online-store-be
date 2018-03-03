@@ -9,5 +9,14 @@ class Items extends Model
 {
 	use SoftDeletes;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name', 'description', 'category_id', 'created_by',
+    ];
+
 	protected $table = 'items';
 }
