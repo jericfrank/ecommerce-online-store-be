@@ -10,7 +10,7 @@ use App\Services\Models\Items;
 use App\Services\Models\User;
 use Laravel\Passport\Passport;
 
-use Mockery;
+use Mockery as m;
 
 class ItemControllerTest extends TestCase
 {
@@ -21,6 +21,8 @@ class ItemControllerTest extends TestCase
             factory(User::class)->create(),
             [ 'web' ]
         );
+    
+        $this->itemInterface = m::mock( 'App\Services\Interfaces\ItemInterface' );
     }
 
     public function testIndex()
@@ -29,17 +31,55 @@ class ItemControllerTest extends TestCase
             // response data
         ];
 
-    	$mock = Mockery::mock( 'App\Services\Interfaces\ItemInterface' );
-    	$mock->shouldReceive( 'list' )->once()->andReturn( $data );
+    	$this->itemInterface->shouldReceive( 'list' )->once()->andReturn( $data );
 
-        $this->app->instance( 'App\Services\Interfaces\ItemInterface', $mock );
+        $this->app->instance( 'App\Services\Interfaces\ItemInterface', $this->itemInterface );
     
         $expect = $this->call( 'GET', '/api/products/items' );
 
         $expect->assertStatus( 200 )->assertExactJson( $data );
     }
 
+    public function testStore()
+    {
+        $payload = [
+            'name'        => 'test',
+            'description' => 'test',
+            'category_id' => 1,
+            'created_by'  => \Auth::user()->id
+        ];
+
+        $this->itemInterface->shouldReceive( 'create' )->once()->with( $payload )->andReturn( [] );
+
+        $this->app->instance( 'App\Services\Interfaces\ItemInterface', $this->itemInterface );
+        
+        $expect = $this->call( 'POST', '/api/products/items', [
+            'name'        => 'test',
+            'description' => 'test',
+            'category_id' => 1
+        ] );
+
+        $expect->assertStatus( 201 )->assertJson( [] );
+    }
+
+    public function testStoreError()
+    {
+        $payload = [
+            'name'        => '',
+            'description' => '',
+            'category_id' => null
+        ];
+
+        $expect = $this->call( 'POST', '/api/products/items', $payload );
+
+        $expect->assertStatus( 422 )->assertJsonStructure([
+            'name'        => [],
+            'description' => [],
+            'category_id' => []
+        ]);
+    }
+
     public function tearDown() {
-        Mockery::close();
+        m::close();
     }
 }

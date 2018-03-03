@@ -34,6 +34,9 @@ class ItemController extends Controller
     		'created_by'  => Auth::user()->id
     	];
 
-    	return $this->items->create( $attributes );
+        return response()->json(
+            $this->items->create( $attributes ),
+            201
+        );
     }
 }
