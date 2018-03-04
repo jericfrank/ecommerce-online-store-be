@@ -63,4 +63,12 @@ class UserRepository extends BaseRepository implements UserInterface
     {
         return Auth::user();
     }
+
+    /**
+     * @return create access token
+     */
+    public function token()
+    {
+        return Auth::user()->createToken('web')->accessToken;
+    }
 }

@@ -28,8 +28,13 @@ class LoginControllerTest extends TestCase
         $mock = m::mock( 'App\Services\Interfaces\UserInterface' );
         $mock->shouldReceive( 'attempt' )->once()->with( $payload )->andReturn( true );
         $mock->shouldReceive( 'user' )->once()->andReturn( m::mock( new User ) );
+        $mock->shouldReceive( 'token' )->once()->andReturn( 'jwtToken' );
+
+        $mockProvider = m::mock( 'App\Services\Interfaces\UserProviderInterface' );
+        $mockProvider->shouldReceive( 'findBy' )->once()->with( [ 'provider', '=', 'internal' ] )->andReturn( [] );
 
         $this->app->instance( 'App\Services\Interfaces\UserInterface', $mock );
+        $this->app->instance( 'App\Services\Interfaces\UserProviderInterface', $mockProvider );
 
         $expect = $this->call( 'POST', '/api/login', $payload );
 
@@ -56,10 +61,10 @@ class LoginControllerTest extends TestCase
     public function testLogout()
     {
         Passport::actingAs(
-            factory(User::class)->create(),
+            new User([ 'name' => 'test' ]),
             [ 'web' ]
         );
-
+        
         $expect = $this->call( 'GET', '/api/logout' );
 
         $expect->assertStatus( 204 );

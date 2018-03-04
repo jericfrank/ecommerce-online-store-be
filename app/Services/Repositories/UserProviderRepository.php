@@ -37,6 +37,15 @@ class UserProviderRepository extends BaseRepository implements UserProviderInter
 
     /**
      * @param array $attributes
+     * @return mixed
+     */
+    public function findBy(array $attributes)
+    {
+        return $this->model->where([ $attributes ])->get();
+    }
+
+    /**
+     * @param array $attributes
      * @param int $id
      * @return bool
      */
