@@ -35,14 +35,14 @@ class LoginController extends Controller
         if ($this->users->attempt(['email' => $request->post('email'), 'password' => $request->post('password')])) {
             $user  = $this->users->user();
             $token = $this->users->token();
-
+            
             $user['providers'] = $this->provider->findBy([ 'provider', '=', 'internal' ]);
 
             $user[ 'provider' ] = 'internal';
 
             return [
                 'user'  => $user,
-                'token' => $token
+                'token' => $token->accessToken
             ];
         }
 

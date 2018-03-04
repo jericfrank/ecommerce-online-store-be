@@ -10,6 +10,7 @@ use App\Services\Models\User;
 use Laravel\Passport\Passport;
 
 use Mockery as m;
+use StdClass;
 
 class LoginControllerTest extends TestCase
 {
@@ -28,7 +29,7 @@ class LoginControllerTest extends TestCase
         $mock = m::mock( 'App\Services\Interfaces\UserInterface' );
         $mock->shouldReceive( 'attempt' )->once()->with( $payload )->andReturn( true );
         $mock->shouldReceive( 'user' )->once()->andReturn( m::mock( new User ) );
-        $mock->shouldReceive( 'token' )->once()->andReturn( 'jwtToken' );
+        $mock->shouldReceive( 'token' )->once()->andReturn( m::self() );
 
         $mockProvider = m::mock( 'App\Services\Interfaces\UserProviderInterface' );
         $mockProvider->shouldReceive( 'findBy' )->once()->with( [ 'provider', '=', 'internal' ] )->andReturn( [] );
