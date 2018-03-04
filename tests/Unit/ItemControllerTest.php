@@ -18,7 +18,7 @@ class ItemControllerTest extends TestCase
         parent::setUp();
     
         Passport::actingAs(
-            factory(User::class)->create(),
+            new User([ 'name' => 'test' ]),
             [ 'web' ]
         );
     
