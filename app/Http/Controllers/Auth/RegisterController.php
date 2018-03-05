@@ -10,6 +10,8 @@ use App\Http\Requests\UserRequest;
 
 use App\Http\Controllers\Controller;
 
+use JWTAuth;
+
 class RegisterController extends Controller
 {
     private $users, $providers;
@@ -32,9 +34,8 @@ class RegisterController extends Controller
      */
     public function register(UserRequest $request)
     {
-        $user = $this->users->create($request->all());
-
-        $provider  = $this->providers->create([
+        $user     = $this->users->create($request->all());
+        $provider = $this->providers->create([
             'avatar'      => '/default-avatar-250x250.png',
             'provider'    => 'internal',
             'user_id'     => $user->id
@@ -42,9 +43,9 @@ class RegisterController extends Controller
 
         $user['providers'] = [ $provider ];
 
-        $token = $user->createToken('web')->accessToken;
-
         $user->provider = 'internal';
+
+        $token = JWTAuth::fromUser( $user );
 
         return [
             'user'  => $user,

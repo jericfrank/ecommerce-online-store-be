@@ -8,6 +8,7 @@ use App\Services\Interfaces\UserProviderInterface;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use JWTAuth;
 use Auth;
 
 class LoginController extends Controller
@@ -32,18 +33,21 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        if ($this->users->attempt(['email' => $request->post('email'), 'password' => $request->post('password')])) {
-            $user  = $this->users->user();
-            $token = $this->users->token();
+        $credentials = ['email' => $request->post('email'), 'password' => $request->post('password') ];
+
+        if ( $token = JWTAuth::attempt( $credentials ) ) {
+            $user  = Auth::user();
             
-            $user['providers'] = $this->provider->findBy([ 'provider', '=', 'internal' ]);
+            $user['providers'] = Auth::user()->providers->where('provider', '=', 'internal');
 
             $user[ 'provider' ] = 'internal';
 
-            return [
-                'user'  => $user,
-                'token' => $token->accessToken
-            ];
+            return response()->json([
+                'user'       => $user,
+                'token'      => $token,
+                'token_type' => 'bearer',
+                'expires_in' => JWTAuth::factory()->getTTL() * 60
+            ]);
         }
 
         return response()->json('Unauthorized', 401);
