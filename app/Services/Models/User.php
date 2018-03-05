@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Services\Models\UserProvider;
+use App\Services\Models\Category;
 
 class User extends Authenticatable
 {
@@ -37,5 +38,13 @@ class User extends Authenticatable
     public function providers()
     {
         return $this->hasMany( UserProvider::class, 'user_id', 'id' );
+    }
+
+    /**
+     * Get the user providers for the user.
+     */
+    public function category()
+    {
+        return $this->hasMany( Category::class, 'created_by', 'id' );
     }
 }

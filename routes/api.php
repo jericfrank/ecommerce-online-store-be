@@ -34,5 +34,6 @@ Route::middleware('auth:api')->group(function () {
 	Route::prefix('products')->group(function () {
 		Route::get('items', 'Products\ItemController@index');
 		Route::post('items', 'Products\ItemController@store');
+		Route::post('categories', 'Products\CategoryController@store');
 	});
 });

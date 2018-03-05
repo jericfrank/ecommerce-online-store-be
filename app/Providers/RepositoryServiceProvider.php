@@ -5,10 +5,12 @@ namespace App\Providers;
 use App\Services\Interfaces\UserInterface;
 use App\Services\Interfaces\UserProviderInterface;
 use App\Services\Interfaces\ItemInterface;
+use App\Services\Interfaces\CategoryInterface;
 
 use App\Services\Repositories\UserRepository;
 use App\Services\Repositories\UserProviderRepository;
 use App\Services\Repositories\ItemRepository;
+use App\Services\Repositories\CategoryRepository;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -44,6 +46,11 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             ItemInterface::class,
             ItemRepository::class
+        );
+
+        $this->app->bind(
+            CategoryInterface::class,
+            CategoryRepository::class
         );
     }
 }
