@@ -11,7 +11,7 @@ use App\Services\Interfaces\UserInterface;
 use App\Services\Interfaces\UserProviderInterface;
 
 use Socialite;
-use Auth;
+use JWTAuth;
 
 class SocialiteController extends Controller
 {
@@ -106,8 +106,10 @@ class SocialiteController extends Controller
             $user->provider = $userProvider;
             
             return [
-                'user'  => $user,
-                'token' => $user->createToken('web')->accessToken
+                'user'       => $user,
+                'token'      => JWTAuth::fromUser( $user ),
+                'token_type' => 'bearer',
+                'expires_in' => JWTAuth::factory()->getTTL() * 60
             ];
         }
 
@@ -125,8 +127,10 @@ class SocialiteController extends Controller
         ]);
 
         return [
-            'user'  => $userCreate->with('providers'),
-            'token' => $userCreate->createToken('web')->accessToken
+            'user'       => $userCreate->with('providers'),
+            'token'      => JWTAuth::fromUser( $userCreate ),
+            'token_type' => 'bearer',
+            'expires_in' => JWTAuth::factory()->getTTL() * 60
         ];
     }
 }
