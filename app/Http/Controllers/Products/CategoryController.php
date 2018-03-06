@@ -14,7 +14,14 @@ class CategoryController extends Controller
 
 	public function __construct(CategoryInterface $category)
     {
+        $this->middleware('auth:api')->except('index');
+
         $this->category = $category;
+    }
+
+    public function index()
+    {
+        return $this->category->list();
     }
 
     public function store(CategoryRequest $request)
