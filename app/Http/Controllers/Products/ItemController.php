@@ -17,7 +17,7 @@ class ItemController extends Controller
 
 	public function __construct(ItemInterface $items)
     {
-        $this->middleware('auth:api')->except('index');
+        $this->middleware('auth:api')->except('index', 'category');
 
         $this->items = $items;
     }
@@ -25,6 +25,14 @@ class ItemController extends Controller
     public function index(Request $request)
     {
         return $this->items->list( $request->query( 'per_page' ) );
+    }
+
+    public function category(Request $request, $id)
+    {
+        return $this->items->findBy(
+            [ 'category_id', '=', $id ],
+            $request->query( 'per_page' )
+        );
     }
 
     public function store(ItemRequest $request)

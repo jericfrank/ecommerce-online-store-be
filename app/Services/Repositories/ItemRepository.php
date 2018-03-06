@@ -18,6 +18,11 @@ class ItemRepository extends BaseRepository implements ItemInterface
         return $this->model->orderBy( $orderField, $order)->paginate( $per_page );
     }
 
+    public function findBy($attributes = [], $per_page = 15, $orderField = 'created_at', $order = 'desc')
+    {
+        return $this->model->where([ $attributes ])->orderBy( $orderField, $order)->paginate( $per_page );
+    }
+
     public function create(array $attributes)
     {
         return $this->model->create($attributes);
