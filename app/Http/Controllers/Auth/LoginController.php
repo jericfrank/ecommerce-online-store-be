@@ -21,6 +21,8 @@ class LoginController extends Controller
      */
     public function __construct(UserInterface $users, UserProviderInterface $provider)
     {
+        $this->middleware('auth:api')->only('logout');
+
         $this->users    = $users;
         $this->provider = $provider;
     }

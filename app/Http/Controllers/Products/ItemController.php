@@ -17,6 +17,8 @@ class ItemController extends Controller
 
 	public function __construct(ItemInterface $items)
     {
+        $this->middleware('auth:api')->except('index');
+
         $this->items = $items;
     }
 

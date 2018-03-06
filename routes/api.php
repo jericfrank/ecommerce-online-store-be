@@ -24,16 +24,14 @@ Route::prefix('login')->group(function () {
 
 Route::post('register', 'Auth\RegisterController@register');
 
-Route::middleware('auth:api')->group(function () {
-	Route::get('logout', 'Auth\LoginController@logout');
+Route::get('logout', 'Auth\LoginController@logout');
 
-	Route::prefix('examples')->group(function () {
-		Route::resource('companies', 'Examples\CompanyController');
-	});
+Route::prefix('examples')->group(function () {
+	Route::resource('companies', 'Examples\CompanyController');
+});
 
-	Route::prefix('products')->group(function () {
-		Route::get('items', 'Products\ItemController@index');
-		Route::post('items', 'Products\ItemController@store');
-		Route::post('categories', 'Products\CategoryController@store');
-	});
+Route::prefix('products')->group(function () {
+	Route::get('items', 'Products\ItemController@index');
+	Route::post('items', 'Products\ItemController@store');
+	Route::post('categories', 'Products\CategoryController@store');
 });
