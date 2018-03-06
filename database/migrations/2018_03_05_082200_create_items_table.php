@@ -17,10 +17,19 @@ class CreateItemsTable extends Migration
             $table->increments('id');
             $table->string('name')->unique();
             $table->string('description');
-            $table->integer('category_id');
-            $table->integer('created_by');
-            $table->integer('updated_by')->nullable();
-            $table->integer('deleted_by')->nullable();
+            
+            $table->integer('category_id')->unsigned();
+            $table->foreign('category_id')->references('id')->on('category');
+
+            $table->integer('created_by')->unsigned();
+            $table->foreign('created_by')->references('id')->on('users');
+
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->foreign('updated_by')->references('id')->on('users');
+
+            $table->integer('deleted_by')->unsigned()->nullable();
+            $table->foreign('deleted_by')->references('id')->on('users');
+
             $table->timestamps();
             $table->softDeletes();
         });
