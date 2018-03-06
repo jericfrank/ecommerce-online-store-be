@@ -20,9 +20,9 @@ class ItemController extends Controller
         $this->items = $items;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return $this->items->list();
+        return $this->items->list( $request->query( 'per_page' ) );
     }
 
     public function store(ItemRequest $request)
