@@ -13,9 +13,9 @@ class ItemRepository extends BaseRepository implements ItemInterface
         $this->model = $items;
     }
 
-    public function list($per_page = 15)
+    public function list($per_page = 15, $orderField = 'created_at', $order = 'desc')
     {
-        return $this->model->paginate( $per_page );
+        return $this->model->orderBy( $orderField, $order)->paginate( $per_page );
     }
 
     public function create(array $attributes)
