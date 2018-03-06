@@ -7,10 +7,10 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use App\Services\Models\User;
-use Laravel\Passport\Passport;
 
 use Mockery as m;
 use StdClass;
+use JWTAuth;
 
 class LoginControllerTest extends TestCase
 {
@@ -26,20 +26,15 @@ class LoginControllerTest extends TestCase
             'password' => 'test',
         ];
 
-        $mock = m::mock( 'App\Services\Interfaces\UserInterface' );
-        $mock->shouldReceive( 'attempt' )->once()->with( $payload )->andReturn( true );
-        $mock->shouldReceive( 'user' )->once()->andReturn( m::mock( new User ) );
-        $mock->shouldReceive( 'token' )->once()->andReturn( m::self() );
-
-        $mockProvider = m::mock( 'App\Services\Interfaces\UserProviderInterface' );
-        $mockProvider->shouldReceive( 'findBy' )->once()->with( [ 'provider', '=', 'internal' ] )->andReturn( [] );
-
-        $this->app->instance( 'App\Services\Interfaces\UserInterface', $mock );
-        $this->app->instance( 'App\Services\Interfaces\UserProviderInterface', $mockProvider );
+        JWTAuth::shouldReceive( 'attempt' )->once()->with( $payload )->andReturn( 'jwtToken' );
+        JWTAuth::shouldReceive( 'user' )->once()->andReturn( m::mock( new User ) );
+        JWTAuth::shouldReceive( 'factory' )->once()->andReturn( m::self() )
+            ->getMock()
+            ->shouldReceive( 'getTTL' )->once()->andReturn( 3600 );
 
         $expect = $this->call( 'POST', '/api/login', $payload );
 
-        $expect->assertStatus( 200 )->assertJsonStructure( [ 'user', 'token' ] );
+        $expect->assertStatus( 200 )->assertJsonStructure( [ 'user', 'token', 'token_type', 'expires_in' ] );
     }
 
     public function testLoginError()
@@ -49,10 +44,7 @@ class LoginControllerTest extends TestCase
             'password' => 'test',
         ];
 
-        $mock = m::mock( 'App\Services\Interfaces\UserInterface' );
-        $mock->shouldReceive( 'attempt' )->once()->with( $payload )->andReturn( false );
-
-        $this->app->instance( 'App\Services\Interfaces\UserInterface', $mock );
+        JWTAuth::shouldReceive( 'attempt' )->once()->with( $payload )->andReturn( false );
 
         $expect = $this->call( 'POST', '/api/login', $payload );
 

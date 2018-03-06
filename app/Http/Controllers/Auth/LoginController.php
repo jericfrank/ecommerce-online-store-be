@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 use JWTAuth;
-use Auth;
 
 class LoginController extends Controller
 {
@@ -36,9 +35,9 @@ class LoginController extends Controller
         $credentials = ['email' => $request->post('email'), 'password' => $request->post('password') ];
 
         if ( $token = JWTAuth::attempt( $credentials ) ) {
-            $user  = Auth::user();
-            
-            $user['providers'] = Auth::user()->providers->where('provider', '=', 'internal');
+            $user  = JWTAuth::user();
+
+            $user['providers'] = JWTAuth::user()->providers->where('provider', '=', 'internal');
 
             $user[ 'provider' ] = 'internal';
 
