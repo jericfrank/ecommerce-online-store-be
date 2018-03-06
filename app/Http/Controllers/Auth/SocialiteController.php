@@ -33,15 +33,9 @@ class SocialiteController extends Controller
      *
      * @return Response
      */
-    public function redirectToProvider(SocialiteRequest $request)
+    public function redirectToProvider($provider)
     {
-        $payload = $request->all();
-
-        $state = [
-            'referer' => $payload[ 'callback' ]
-        ];
-
-        return Socialite::driver($payload[ 'provider' ])->with([ 'state' => $state ])->stateless()->redirect()->getTargetUrl();
+        return Socialite::driver($provider)->stateless()->redirect()->getTargetUrl();
     }
 
     /**
@@ -51,10 +45,9 @@ class SocialiteController extends Controller
      */
     public function handleProviderCallback(Request $request, $provider)
     {
-        $state = $request->get('state');
-        $code  = $request->get('code');
+        $code = $request->get('code');
 
-        $redirect = $state[ 'referer' ].'?code='.$code.'&provider='.$provider;
+        $redirect = 'http://localhost:3000/callback?code='.$code.'&provider='.$provider;
 
         return redirect()->away( $redirect );
     }

@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 
 Route::prefix('login')->group(function () {
 	Route::post('/', 'Auth\LoginController@login');
-	Route::post('provider', 'Auth\SocialiteController@redirectToProvider');
+	Route::get('{provider}/provider', 'Auth\SocialiteController@redirectToProvider');
 	Route::get('{provider}/callback', 'Auth\SocialiteController@handleProviderCallback');
 	Route::get('{provider}/auth', 'Auth\SocialiteController@handleProviderAuth');
 });
