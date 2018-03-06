@@ -57,10 +57,10 @@ class LoginController extends Controller
      *
      * @return Response
      */
-    public function logout(Request $request)
+    public function logout()
     {
-        $request->user()->token()->revoke();
-        
+        JWTAuth::invalidate(JWTAuth::getToken());
+
         return response()->json(null, 204);
     }
 }
