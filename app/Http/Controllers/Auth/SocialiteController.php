@@ -96,7 +96,8 @@ class SocialiteController extends Controller
                 $this->provider->update( $attributes, $id );
             }
 
-            $user->provider = $userProvider;
+            $user->providers = $provider;
+            $user->provider  = $userProvider;
             
             return [
                 'user'       => $user,
@@ -112,15 +113,18 @@ class SocialiteController extends Controller
             'password' => null
         ]);
 
-        $this->provider->create([
+        $provider = $this->provider->create([
             'avatar'      => $details->getAvatar(),
             'provider'    => $userProvider,
             'provider_id' => $details->getId(),
             'user_id'     => $userCreate->id
         ]);
 
+        $userCreate->providers = [ $provider ];
+        $userCreate->provider  = $userProvider;
+
         return [
-            'user'       => $userCreate->with('providers'),
+            'user'       => $userCreate,
             'token'      => JWTAuth::fromUser( $userCreate ),
             'token_type' => 'bearer',
             'expires_in' => JWTAuth::factory()->getTTL() * 60
