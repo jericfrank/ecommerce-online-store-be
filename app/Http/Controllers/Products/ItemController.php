@@ -17,7 +17,7 @@ class ItemController extends Controller
 
 	public function __construct(ItemInterface $items)
     {
-        $this->middleware('auth:api')->except('index', 'category');
+        $this->middleware('auth:api')->except('index', 'category', 'search');
 
         $this->items = $items;
     }
@@ -48,5 +48,10 @@ class ItemController extends Controller
             $this->items->create( $attributes ),
             201
         );
+    }
+
+    public function search(Request $request)
+    {
+        return $this->items->search( $request->query( 'keyword' ), $request->query( 'per_page' ) );
     }
 }

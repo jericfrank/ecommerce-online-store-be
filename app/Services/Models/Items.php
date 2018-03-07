@@ -2,12 +2,13 @@
 
 namespace App\Services\Models;
 
+use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Items extends Model
 {
-	use SoftDeletes;
+	use Searchable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.

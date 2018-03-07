@@ -27,4 +27,9 @@ class ItemRepository extends BaseRepository implements ItemInterface
     {
         return $this->model->create($attributes);
     }
+
+    public function search($keyword, $per_page = 15)
+    {
+        return $this->model->search( $keyword )->paginate( $per_page );
+    }
 }
