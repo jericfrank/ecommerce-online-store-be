@@ -50,8 +50,8 @@ class ItemController extends Controller
         );
     }
 
-    public function search(Request $request)
+    public function search(Request $request, $keyword)
     {
-        return $this->items->search( $request->query( 'keyword' ), $request->query( 'per_page' ) );
+        return $this->items->search( $keyword, $request->query( 'per_page' ) );
     }
 }

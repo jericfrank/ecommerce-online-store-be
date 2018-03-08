@@ -33,7 +33,7 @@ Route::prefix('examples')->group(function () {
 Route::prefix('products')->group(function () {
 	Route::get('items', 'Products\ItemController@index');
 	Route::get('items/category/{id}', 'Products\ItemController@category');
-	Route::get('items/search', 'Products\ItemController@search');
+	Route::get('items/search/{keyword}', 'Products\ItemController@search');
 	Route::post('items', 'Products\ItemController@store');
 	Route::get('categories', 'Products\CategoryController@index');
 	Route::post('categories', 'Products\CategoryController@store');
