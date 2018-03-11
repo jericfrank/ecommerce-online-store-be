@@ -38,3 +38,9 @@ Route::prefix('products')->group(function () {
 	Route::get('categories', 'Products\CategoryController@index');
 	Route::post('categories', 'Products\CategoryController@store');
 });
+
+Route::prefix('checkouts')->group(function () {
+	Route::get('cart', 'Checkout\CartController@index');
+	Route::post('cart', 'Checkout\CartController@store');
+	Route::delete('cart/{id}', 'Checkout\CartController@destroy');
+});

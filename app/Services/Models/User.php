@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Services\Models\UserProvider;
 use App\Services\Models\Category;
+use App\Services\Models\Cart;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -40,12 +41,14 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany( UserProvider::class, 'user_id', 'id' );
     }
 
-    /**
-     * Get the user providers for the user.
-     */
     public function category()
     {
         return $this->hasMany( Category::class, 'created_by', 'id' );
+    }
+
+    public function cart()
+    {
+        return $this->hasMany( Cart::class, 'created_by', 'id' );
     }
 
     // Rest omitted for brevity

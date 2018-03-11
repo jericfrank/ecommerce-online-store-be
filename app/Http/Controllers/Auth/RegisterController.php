@@ -36,7 +36,7 @@ class RegisterController extends Controller
     {
         $user     = $this->users->create($request->all());
         $provider = $this->providers->create([
-            'avatar'      => '/default-avatar-250x250.png',
+            'avatar'      => $request->server()['HTTP_HOST'].'/img/default-avatar-250x250.png',
             'provider'    => 'internal',
             'user_id'     => $user->id
         ]);
