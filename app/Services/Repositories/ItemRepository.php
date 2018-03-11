@@ -15,7 +15,7 @@ class ItemRepository extends BaseRepository implements ItemInterface
 
     public function list($per_page = 15, $orderField = 'created_at', $order = 'desc')
     {
-        return $this->model->orderBy( $orderField, $order)->paginate( $per_page );
+        return $this->model->with('price')->orderBy( $orderField, $order)->paginate( $per_page );
     }
 
     public function findBy($attributes = [], $per_page = 15, $orderField = 'created_at', $order = 'desc')

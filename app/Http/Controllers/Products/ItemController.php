@@ -44,10 +44,13 @@ class ItemController extends Controller
     		'created_by'  => Auth::user()->id
     	];
 
-        return response()->json(
-            $this->items->create( $attributes ),
-            201
-        );
+        $data = $this->items->create( $attributes );
+
+        $data->price()->create([
+            'latest' => $request->get('price')
+        ]);
+
+        return response()->json( $data, 201 );
     }
 
     public function search(Request $request)

@@ -24,9 +24,10 @@ class ItemRequest extends Request
     public function rules()
     {
         return [
-            'name'        => 'required',
+            'name'        => 'required|unique:items',
             'description' => 'required',
-            'category_id' => 'required'
+            'category_id' => 'required',
+            'price'       => 'required|numeric'
         ];
     }
 }
