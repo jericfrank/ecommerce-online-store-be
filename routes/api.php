@@ -44,3 +44,7 @@ Route::prefix('checkouts')->group(function () {
 	Route::post('cart', 'Checkout\CartController@store');
 	Route::delete('cart/{id}', 'Checkout\CartController@destroy');
 });
+
+Route::prefix('uploads')->group(function () {
+	Route::post('image', 'Files\ImageController@store');
+});
