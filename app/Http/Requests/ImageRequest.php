@@ -24,7 +24,7 @@ class ImageRequest extends Request
     public function rules()
     {
         return [
-            'content' => 'required|image|file'
+            'content' => 'required|image|file|dimensions:width=500,height=383'
         ];
     }
 }

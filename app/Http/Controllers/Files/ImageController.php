@@ -15,13 +15,13 @@ class ImageController extends Controller
         $this->middleware('auth:api');
     }
 
-    public function store(Request $request)
+    public function store(ImageRequest $request)
     {
     	$content = $request->file('content');
         $path    = Storage::putFile('public', $content);
 
         $img = Image::make( storage_path( 'app/'.$path ) );
-        $img->resize(50, 50);
+        // $img->resize(50, 50);
         $img->save( storage_path( 'app/public/EfKMNeS27-50x50.png' ) );
 
     	return $img;
